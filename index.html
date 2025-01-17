@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- Helps the browser identify support for mobile applications -->
+    <meta charset="utf-8" />
+
+    <meta name="viewport" content="initial-scale=1,user-scalable=no,maximum-scale=1,width=device-width" />
+
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <!-- Title on the browser tab -->
+    <title>WebGIS</title>
+    <!-- Leaflet CSS Library -->
+    <link rel="stylesheet" href="http://unpkg.com/leaflet@1.0.2/dist/leaflet.css" />
+    <!-- Leaflet JavaScript Library -->
+    <script src="http://unpkg.com/leaflet@1.0.2/dist/leaflet.js"></script>
+    <!-- Style for the fullscreen map display -->
+    <style>
+      html,
+      body,
+      #map {
+        height: 100%;
+        width: 100%;
+        margin: 0px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- HTML Block to display the map -->
+    <div id="map"></div>
+
+    <script>
+      /* Initial Map */
+      //lat, long, zoom (the initial view can be determined from Google Earth)
+      var map = L.map("map").setView([-7.9, 110.45], 10);
+      /* Tile Basemap */
+      var basemap0 = L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        maxZoom: 19,
+        attribution: '&copy; <ahref="http://www.openstreetmap.org/copyright" > OpenStreetMap</a>',
+      });
+      var Esri_WorldImagery = L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{ x } ", {
+        attribution: "Tiles & copy; Faiz Fadhli & mdash; Statistics Study Program",
+      });
+
+      var CyclOSM = L.tileLayer("https://{s}.tile-cyclosm.openstreetmap.fr/cyclosm/{z}/{x}/{y}.png", {
+        maxZoom: 20,
+        attribution:
+          '<a href="https://github.com/cyclosm/cyclosm-cartocss-style/releases" title="CyclOSM - Open Bicycle render">CyclOSM</a> | Map data: &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+      });
+      Esri_WorldImagery.addTo(map); //Calls the basemap to be displayed when the page is loaded
+      /*Control Layer*/
+      var baseMaps = {
+        "Open Street Map": basemap0,
+        CyclOSM: CyclOSM,
+        "Esri WorldImagery": Esri_WorldImagery,
+      };
+
+      var Layers = {};
+      var layerControl = L.control.layers(baseMaps, Layers, { collapsed: false });
+      layerControl.addTo(map);
+      // Marker
+      // Example list of 30 apotek with coordinates and names
+      var apotekList = [
+        { name: "Apotek Widigdo 5", address: "8CQ5+6WP, Blembem Kidul, Harjobinangun, Kec. Pakem, Kabupaten Sleman, Daerah Istimewa Yogyakarta 55582", coords: [-7.65936039338423, 110.40983298723825] },
+        { name: "Apotek Pakem", address: "8CQC+45P, Jl. Kaliurang, Duwetsari, Pakembinangun, Kec. Pakem, Kabupaten Sleman, Daerah Istimewa Yogyakarta 55582", coords: [-7.658679873606898, 110.41996100873915] },
+        { name: "Apotek K-24 Pakem Sleman", address: "Jl. Kaliurang No.Km. 17, Sukanan, Pakembinangun, Kec. Pakem, Yogyakarta, Daerah Istimewa Yogyakarta 55582", coords: [-7.664464257059872, 110.41858771768817] },
+        { name: "Apotek Binangun", address: "Jl. Kaliurang No.15b, Area Sawah, Pakembinangun, Kec. Pakem, Kabupaten Sleman, Daerah Istimewa Yogyakarta 55582", coords: [-7.660891558908766, 110.4191027018323] },
+        { name: "Apotek Harmoni Sleman", address: "Jl. Cangkringan No.32, Kregan, Umbulmartani, Kec. Ngemplak, Kabupaten Sleman, Daerah Istimewa Yogyakarta 55584", coords: [-7.665995404233688, 110.42820075504497] },
+        { name: "Apotek Formula Farma", address: "Jl. Kaliurang Jl. Degolan No.KM 14.5, Ngemplak, Umbulmartani, Kec. Ngemplak, Kabupaten Sleman, Daerah Istimewa Yogyakarta 55584", coords: [-7.679775480829699, 110.41893104045093] },
+        { name: "Apotek Balong", address: "Balong, Donoharjo, Kec. Ngaglik, Kabupaten Sleman, Daerah Istimewa Yogyakarta 55581", coords: [-7.674161429530803, 110.39077857444944] },
+        { name: "Apotek CASSA FARMA", address: "Jl. Grogolan, Area Sawah, Widodomartani, Kec. Ngemplak, Kabupaten Sleman, Daerah Istimewa Yogyakarta 55584", coords: [-7.679265116036432, 110.44725516791327] },
+        { name: "Apotek UII Farma", address: "Jl. Kaliurang No.Km 14,5, Lodadi, Umbulmartani, Kec. Ngemplak, Kabupaten Sleman, Daerah Istimewa Yogyakarta 55584", coords: [-7.686240054627042, 110.4189310405747] },
+        { name: "Apotek Arroyan Farma", address: "Jl. Ketulan, RT.4/RW.2, Bulus I, Candibinangun, Pakem, Sleman Regency, Special Region of Yogyakarta 55582", coords: [-7.681306573454828, 110.39833167502664] },
+        { name: "Apotek Jaya Farma", address: "Jl. Palagan Tentara Pelajar, Kayunan, Donoharjo, Kec. Ngaglik, Kabupaten Sleman, Daerah Istimewa Yogyakarta 55581", coords: [-7.686069935636095, 110.38854697655351] },
+        { name: "Apotek Kusuma Sehat", address: "Jl. Besi Jangkang, Jetis, Widodomartani, Kec. Ngemplak, Kabupaten Sleman, Daerah Istimewa Yogyakarta 55584", coords: [-7.700529814947989, 110.44725516769246] },
+        { name: "Apotek Kimia Farma Besi", address: "Jl. Kaliurang No.KM.13, Besi, Sardonoharjo, Kec. Ngaglik, Kabupaten Sleman, Daerah Istimewa Yogyakarta 55581", coords: [-7.694471639546838, 110.41676579897204] },
+        { name: "Apotek K-24 Besi Sleman", address: "Jl. Kaliurang KM 13, Blk. B No.10 5, Besi, Sukoharjo, Kec. Ngaglik, Kabupaten Sleman, Daerah Istimewa Yogyakarta 55581", coords: [-7.698316571675137, 110.41588092719046] },
+        { name: "Apotek Pharm24 Jakal", address: "Jl. Kaliurang No.12, Candi Karang, Sardonoharjo, Kec. Ngaglik, Kabupaten Sleman, Daerah Istimewa Yogyakarta 55581", coords: [-7.701098201743011, 110.41496229297802] },
+        { name: "Apotek Pandanaran", address: "Pandanaran, Candi Winangun, Sardonoharjo, Kec. Ngaglik, Kabupaten Sleman, Daerah Istimewa Yogyakarta 55581", coords: [-7.7000843779089205, 110.40957911904418] },
+        { name: "Apotek K-24 Rejodani", address: "Jl. Palagan Tentara Pelajar No.Km. 10, Tambak Rejo, Sariharjo, Kec. Ngaglik, Kabupaten Sleman, Daerah Istimewa Yogyakarta 55581", coords: [-7.707238941224853, 110.38768918107826] },
+        { name: "Apotek Aneka Syifa 1", address: "Jl. Rejodani, Rejodani, Sariharjo, Kec. Ngaglik, Kabupaten Sleman, Daerah Istimewa Yogyakarta 55581", coords: [-7.709389890054214, 110.3892364218725] },
+        { name: "Apotek Rajawali", address: "Jalan Rajawali No.55 Sanggrahan, Manukan, Condongcatur, Kec. Depok, Kabupaten Sleman, Daerah Istimewa Yogyakarta 55283", coords: [-7.743063790489782, 110.3998505726207] },
+        { name: "Apotek Anggajaya", address: "Jl. Anggajaya 2 No.11, Sanggrahan, Condongcatur, Kec. Depok, Kabupaten Sleman, Daerah Istimewa Yogyakarta 55281", coords: [-7.747412779740229, 110.40127955917337] },
+        { name: "Apotek Asri", address: "Jalan Anggajaya Krangkungan, Condong catur, Depok, Sanggrahan, Condongcatur, Kecamatan Sleman, Sleman Regency, Special Region of Yogyakarta 55384", coords: [-7.7494355501377, 110.4028106161941] },
+        { name: "Apotek Visi Pharma", address: "Jl. Cemp. No.32, Perumnas Condong Catur, Condongcatur, Kec. Depok, Kabupaten Sleman, Daerah Istimewa Yogyakarta 55281", coords: [-7.753379924459214, 110.40679136444801] },
+        { name: "Apotek Depok", address: "Jl. Anggajaya No.1, RT.01/RW.29, Gejayan, Condongcatur, Kec. Depok, Kabupaten Sleman, Daerah Istimewa Yogyakarta 55283", coords: [-7.756110623534083, 110.39464497888945] },
+        { name: "Apotek Optima", address: "Jl. Monjali No.91A Lantai 1, Gemawang, Sinduadi, gemawang, Yogyakarta, Daerah Istimewa Yogyakarta 55284", coords: [-7.757627670896428, 110.3706584194996] },
+        { name: "Apotek K-24 Gejayan", address: "Jl. Affandi No.29, Santren, Caturtunggal, Kec. Depok, Kabupaten Sleman, Daerah Istimewa Yogyakarta 55281", coords: [-7.769763852967265, 110.39035801915] },
+        { name: "Apotek SS", address: "Jl. Seturan Raya No.3, Kledokan, Caturtunggal, Kec. Depok, Kabupaten Sleman, Daerah Istimewa Yogyakarta 55281", coords: [-7.763999210314088, 110.41067004208944] },
+        { name: "Apotek Lunar", address: "Jl. Perumnas, Kledokan, Condongcatur, Kec. Depok, Kabupaten Sleman, Daerah Istimewa Yogyakarta 55281", coords: [-7.7662241694793215, 110.40617894149527] },
+        { name: "Apotek Anugerah", address: "Jl. Babarsari No.88, Tambak Bayan, Caturtunggal, Kec. Depok, Kabupaten Sleman, Daerah Istimewa Yogyakarta 55281", coords: [-7.772292180028509, 110.41628391783212] },
+        { name: "Apotek K-24 Jl Magelang", address: "Jalan Magelang No.160-162 Kricak, Karangwaru, Kec. Tegalrejo, Kota Yogyakarta, Daerah Istimewa Yogyakarta 55241", coords: [-7.771556789894338, 110.36251882024648] },
+        { name: "Apotek Rajawali", address: "Jl. Poncowinatan No.92, Cokrodiningratan, Kec. Jetis, Kota Yogyakarta, Daerah Istimewa Yogyakarta 55233", coords: [-7.778870367391631, 110.36337712715334] },
+        { name: "Apotek Kentungan", address: "Jl. Kaliurang KM.6 No.30, Manggung, Caturtunggal, Kec. Depok, Kabupaten Sleman, Daerah Istimewa Yogyakarta 55281", coords: [-7.7506358535953765, 110.38243153989352] },
+      ];
+
+      // Loop through the list and add markers
+      apotekList.forEach(function (apotek) {
+        var marker = L.marker(apotek.coords).bindPopup("<b>" + apotek.name + "</b><br>" + apotek.address);
+        marker.addTo(map);
+      });
+    </script>
+  </body>
+</html>
